@@ -2,10 +2,10 @@
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from typing import List
-import crud
-from database import SessionLocal, engine
-import schemas
-from models import *
+import app.crud as crud
+from app.database import SessionLocal, engine
+import app.schemas as schemas
+from app.models import *
 
 app = FastAPI(title="E-commerce API")
 

@@ -1,0 +1,15 @@
+{
+    "family": "fastapi-app",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "containerDefinitions": [{
+        "name": "fastapi-app",
+        "image": "816069167966.dkr.ecr.us-east-1.amazonaws.com/fastapipostgres:latest",
+        "portMappings": [{
+            "containerPort": 8000,
+            "protocol": "tcp"
+        }]
+    }]
+}
