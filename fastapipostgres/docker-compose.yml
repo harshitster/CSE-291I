@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:15
+    container_name: ecommerce_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ecommerce
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - ecommerce_network
+
+  app:
+    build: .
+    container_name: ecommerce_app
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_NAME: ecommerce
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - ecommerce_network
+    command: >
+      sh -c "python create_database.py &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+volumes:
+  postgres_data:
+
+networks:
+  ecommerce_network:
+    driver: bridge
