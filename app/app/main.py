@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from old_app.database import Database
+from app.database import Database
 import psycopg2
 from pydantic import BaseModel
 from typing import Optional
