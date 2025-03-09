@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:15
     container_name: ecommerce_db
-    command: ["postgres", "-c", "log_duration=on"]
+    command: ["postgres", "-c", "log_duration=on", "-c", "log_statement=all"]
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
