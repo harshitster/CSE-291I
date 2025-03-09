@@ -4,8 +4,18 @@ import psycopg2
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
+import time
+from fastapi import Request
 
 app = FastAPI()
+
+@app.middleware("http")
+async def log_request_latency(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    latency = time.time() - start_time
+    print(f"Latency: {latency:.4f}s | {request.method} {request.url.path}")  # Simplified URL
+    return response
 
 # Initialize database connection pool
 @app.on_event("startup")

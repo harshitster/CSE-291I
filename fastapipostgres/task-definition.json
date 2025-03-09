@@ -1,0 +1,101 @@
+{
+  "family": "ecommerce-task",
+  "networkMode": "awsvpc",
+  "executionRoleArn": "arn:aws:iam::134431246753:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::134431246753:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "ecommerce-app",
+      "image": "134431246753.dkr.ecr.us-west-2.amazonaws.com/ecommerce-app:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "hostPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "DB_HOST",
+          "value": "localhost"
+        },
+        {
+          "name": "DB_NAME",
+          "value": "ecommerce"
+        },
+        {
+          "name": "DB_USER",
+          "value": "postgres"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": "postgres"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ecommerce-task",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "app"
+        }
+      },
+      "dependsOn": [
+        {
+          "containerName": "ecommerce-db",
+          "condition": "HEALTHY"
+        }
+      ]
+    },
+    {
+      "name": "ecommerce-db",
+      "image": "134431246753.dkr.ecr.us-west-2.amazonaws.com/ecommerce-db:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 5432,
+          "hostPort": 5432,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "POSTGRES_USER",
+          "value": "postgres"
+        },
+        {
+          "name": "POSTGRES_PASSWORD",
+          "value": "postgres"
+        },
+        {
+          "name": "POSTGRES_DB",
+          "value": "ecommerce"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ecommerce-task",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "db"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "pg_isready -U postgres || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 30
+      }
+    }
+  ],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "1024",
+  "memory": "2048"
+}
